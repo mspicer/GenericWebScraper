@@ -27,9 +27,9 @@ for item in range(1):
 # for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#ytd-comment-renderer"))):
 #     #author.append(comment.text)    
 #     df = df.append({'author': author}, ignore_index=True))
-pd.concat([pd.DataFrame([author.text], columns=['Author']) for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".ytd-comment-renderer")) )], ignore_index=True)
+df = pd.concat([pd.DataFrame([author.text], columns=['Author']) for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".ytd-comment-renderer")) )], ignore_index=True)
 
-pd.concat([pd.DataFrame([comment.text], columns=['Comment']) for comment in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text")) )], ignore_index=True)
+df = pd.concat([df([comment.text], columns=['Comment']) for comment in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text")) )], ignore_index=True)
 
 # for comment in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text"))):
 #     data.append(comment.text)
