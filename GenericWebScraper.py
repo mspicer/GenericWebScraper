@@ -34,11 +34,14 @@ display = Display(visible=0, size=(800, 600))
 display.start()
 driver = webdriver.Chrome()
 driver.get('https://www.youtube.com/watch?v=kuhhT_cBtFU&t=2s')
-for item in range(200): 
+wait = WebDriverWait(driver,15)
+for item in range(5): 
     wait.until(EC.visibility_of_element_located((By.TAG_NAME,"body"))).send_keys(Keys.END)
     time.sleep(15)
 for comment in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text"))):
     data.append(comment.text)
+
+
 
 with Chrome(executable_path="PATH WHERE YOUR DRIVER IS") as driver:
     wait = WebDriverWait(driver,15)
