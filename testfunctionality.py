@@ -21,15 +21,15 @@ driver.get('https://www.youtube.com/watch?v=un9x-DjTMT0')
 wait = WebDriverWait(driver,15)
 df = pd.DataFrame()
 
-for item in range(5): 
+for item in range(1): 
     wait.until(EC.visibility_of_element_located((By.TAG_NAME,"body"))).send_keys(Keys.END)
     time.sleep(15)
 # for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#ytd-comment-renderer"))):
 #     #author.append(comment.text)    
 #     df = df.append({'author': author}, ignore_index=True))
-pd.concat([pd.DataFrame([author], columns=['Author']) for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".ytd-comment-renderer")) )], ignore_index=True)
+pd.concat([pd.DataFrame([author.text], columns=['Author']) for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".ytd-comment-renderer")) )], ignore_index=True)
 
-pd.concat([pd.DataFrame([author], columns=['Comment']) for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text")) )], ignore_index=True)
+pd.concat([pd.DataFrame([comment.text], columns=['Comment']) for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text")) )], ignore_index=True)
 
 # for comment in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text"))):
 #     data.append(comment.text)
