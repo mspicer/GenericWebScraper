@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+'''
+Generic Web Scraper
+By: Mike Spicer (@d4rkm4tter)
+'''
+
 import time
 #from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
@@ -21,39 +26,59 @@ from multiprocessing.pool import ThreadPool
 from multiprocessing import Process
 import pandas as pd
 import shutil
-
+from urllib.parse import urlparse
 
 def main():
     parser = argparse.ArgumentParser(description="Generic Web Scraper - Just another web scrapper")
-    parser.add_argument("-yt", "--youtube", action="store_true", help="Grab some comments from a Youtube Vide")
-    parser.add_argument("-u", "--url", action="store", help="The URL that will be grabbed")
+    parser.add_argument("-yt", "--youtube", action="store_true", dest='youtube', help="Grab some comments from a Youtube Vide")
+    parser.add_argument("-c", "--comment_count", action="store_true", dest="cmcnt", help="The number of pages of comments to get")
+    parser.add_argument("-u", "--url", action="store", dest='url', help="The URL that will be grabbed")
+    
+    args = parser.parse_args()
+        
+    if args.url:
+        pr = urlparse(args.url)
+        if pr.scheme == '' and pr.netloc = '':
+            usage(parser)
+            sys.exit(1)
+
+    if args.url and args.youtube and args.cmcnt:
+        grabytcomments(args.url, cnt=args.cmcnt)
+    else if args.url and args.youtube:
+        grabytcomments(args.url)
     
 
-data=[]
-display = Display(visible=0, size=(800, 600))
-display.start()
-driver = webdriver.Chrome()
-driver.get('https://www.youtube.com/watch?v=kuhhT_cBtFU&t=2s')
-wait = WebDriverWait(driver,15)
-for item in range(5): 
-    wait.until(EC.visibility_of_element_located((By.TAG_NAME,"body"))).send_keys(Keys.END)
-    time.sleep(15)
-for comment in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text"))):
-    data.append(comment.text)
 
+def usage(parser):
+    print("""
+++++++++++++++++++++++++++++++
+    Generic Web Scraper
+++++++++++++++++++++++++++++++
+""")
+    parser.print_help()
+    sys.exit(1)
 
+def grabytcomments(url, cnt=10):
 
-with Chrome(executable_path="PATH WHERE YOUR DRIVER IS") as driver:
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    driver = webdriver.Chrome()
+    driver.get(url)
     wait = WebDriverWait(driver,15)
-    driver.get("https://www.youtube.com/watch?v=kuhhT_cBtFU&t=2s")
-for item in range(200): 
-    wait.until(EC.visibility_of_element_located((By.TAG_NAME,"body"))).send_keys(Keys.END)
-    time.sleep(15)
-for comment in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text"))):
-    data.append(comment.text)
-
-import pandas as pd   
-df = pd.DataFrame(data, columns=['comment'])
-df.head()
+    df = pd.DataFrame()
 
 
+    for item in range(cnt): 
+        wait.until(EC.visibility_of_element_located((By.TAG_NAME,"body"))).send_keys(Keys.END)
+        time.sleep(2)
+
+    df = pd.concat([pd.DataFrame([author.text], columns=['Author']) for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#author-text")) )], ignore_index=True)
+
+    df['AuthorLink'] = [author.get_attribute('href') for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#author-text")) )]
+
+    df['Comment'] = [comment.text for comment in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text")) )]
+    print(df.head())
+
+    
+if __name__ == "__main__":
+    main()
