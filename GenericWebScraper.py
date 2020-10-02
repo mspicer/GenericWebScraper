@@ -68,7 +68,7 @@ def grabytcomments(url, cnt=10):
     df = pd.DataFrame()
 
 
-    for item in range(cnt): 
+    for item in range(int(cnt)): 
         wait.until(EC.visibility_of_element_located((By.TAG_NAME,"body"))).send_keys(Keys.END)
         time.sleep(2)
 
