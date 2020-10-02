@@ -38,7 +38,7 @@ def main():
         
     if args.url:
         pr = urlparse(args.url)
-        if pr.scheme == '' and pr.netloc = '':
+        if pr.scheme == '' and pr.netloc == '':
             usage(parser)
             sys.exit(1)
 
