@@ -44,7 +44,7 @@ def main():
 
     if args.url and args.youtube and args.cmcnt:
         grabytcomments(args.url, cnt=args.cmcnt)
-    else if args.url and args.youtube:
+    elif args.url and args.youtube:
         grabytcomments(args.url)
     
 
