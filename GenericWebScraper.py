@@ -31,7 +31,7 @@ from urllib.parse import urlparse
 def main():
     parser = argparse.ArgumentParser(description="Generic Web Scraper - Just another web scrapper")
     parser.add_argument("-yt", "--youtube", action="store_true", dest='youtube', help="Grab some comments from a Youtube Vide")
-    parser.add_argument("-c", "--comment_count", action="store_true", dest="cmcnt", help="The number of pages of comments to get")
+    parser.add_argument("-c", "--comment_count", action="store", dest="cmcnt", help="The number of pages of comments to get")
     parser.add_argument("-u", "--url", action="store", dest='url', help="The URL that will be grabbed")
     
     args = parser.parse_args()
