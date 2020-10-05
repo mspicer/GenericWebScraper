@@ -27,13 +27,21 @@ from multiprocessing import Process
 import pandas as pd
 import shutil
 from urllib.parse import urlparse
+from sqlalchemy import create_engine
+
+
+VERBOSE = False
 
 def main():
+    global VERBOSE
     parser = argparse.ArgumentParser(description="Generic Web Scraper - Just another web scrapper")
     parser.add_argument("-yt", "--youtube", action="store_true", dest='youtube', help="Grab some comments from a Youtube Vide")
     parser.add_argument("-c", "--comment_count", action="store", dest="cmcnt", help="The number of pages of comments to get")
     parser.add_argument("-u", "--url", action="store", dest='url', help="The URL that will be grabbed")
-    
+    parser.add_argument("-db", "-db_out", action="store_true", dest="dbout", help="Output the data to SQLite.")
+    parser.add_argument("-c", "--csv", action="store_true", dest="csv", help="Output the data as CSV file")
+    parser.add_argument("-o", "--out_file", action="store", dest="output", help="Output file")
+
     args = parser.parse_args()
         
     if args.url:
@@ -45,8 +53,17 @@ def main():
     if args.url and args.youtube and args.cmcnt:
         grabytcomments(args.url, cnt=args.cmcnt)
     elif args.url and args.youtube:
-        grabytcomments(args.url)
-    
+        d = grabytcomments(args.url)
+        if d.count() > 0 and args.dbout:
+            #Convert dataframe to sqlite db
+            engine = create_engine("sqlite:///{}".format(filename), echo=True)
+            sqlite_connection = engine.connect()
+            d.to_sql('ytcomments', sqlite_connection)
+        if d.count() > 0 and args.csv:
+            d.to_csv(filename)
+        else:
+            for row in d:
+                print(row)
 
 
 def usage(parser):
@@ -59,7 +76,7 @@ def usage(parser):
     sys.exit(1)
 
 def grabytcomments(url, cnt=10):
-
+    global VERBOSE
     display = Display(visible=0, size=(800, 600))
     display.start()
     driver = webdriver.Chrome()
@@ -69,15 +86,22 @@ def grabytcomments(url, cnt=10):
 
 
     for item in range(int(cnt)): 
+        if VERBOSE:
+            print("Sending END key, iteration: {}".format(item))
         wait.until(EC.visibility_of_element_located((By.TAG_NAME,"body"))).send_keys(Keys.END)
         time.sleep(2)
 
     df = pd.concat([pd.DataFrame([author.text], columns=['Author']) for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#author-text")) )], ignore_index=True)
-
+    if VERBOSE:
+        print("Authors added to dataframe, Count: {}".format(df.count())
     df['AuthorLink'] = [author.get_attribute('href') for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#author-text")) )]
-
+    if VERBOSE:
+        print("Authors profile link added to dataframe, Count: {}".format(df.count())
     df['Comment'] = [comment.text for comment in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text")) )]
+    if VERBOSE:
+        print("Comment added to dataframe, Count: {}".format(df.count())
     print(df.head())
+    return df
 
     
 if __name__ == "__main__":
