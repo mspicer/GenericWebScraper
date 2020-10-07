@@ -68,7 +68,7 @@ def main():
             engine = create_engine("sqlite:///{}".format(filename), echo=True)
             sqlite_connection = engine.connect()
             d.to_sql('ytcomments', sqlite_connection)
-        if d.count() > 0 and args.csv:
+        if len(d.index) > 0 and args.csv:
             d.to_csv(filename)
         else:
             for row in d:
