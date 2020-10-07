@@ -35,31 +35,40 @@ VERBOSE = False
 def main():
     global VERBOSE
     parser = argparse.ArgumentParser(description="Generic Web Scraper - Just another web scrapper")
-    parser.add_argument("-yt", "--youtube", action="store_true", dest='youtube', help="Grab some comments from a Youtube Vide")
-    parser.add_argument("-c", "--comment_count", action="store", dest="cmcnt", help="The number of pages of comments to get")
+    parser.add_argument("-yt", "--youtube", action="store_true", dest='youtube', help="Grab some comments from a Youtube Video")
+    parser.add_argument("-cc", "--comment_count", action="store", dest="cmcnt", help="The number of pages of comments to get")
     parser.add_argument("-u", "--url", action="store", dest='url', help="The URL that will be grabbed")
     parser.add_argument("-db", "-db_out", action="store_true", dest="dbout", help="Output the data to SQLite.")
     parser.add_argument("-c", "--csv", action="store_true", dest="csv", help="Output the data as CSV file")
     parser.add_argument("-o", "--out_file", action="store", dest="output", help="Output file")
+    parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="Make things verbose")
 
     args = parser.parse_args()
-        
+    
+    if args.verbose:
+        VERBOSE = True
+
     if args.url:
         pr = urlparse(args.url)
         if pr.scheme == '' and pr.netloc == '':
             usage(parser)
             sys.exit(1)
+    filename = "scrape-{}".format(int(time.time()))
+    if args.output:
+        filename = args.output
 
     if args.url and args.youtube and args.cmcnt:
         grabytcomments(args.url, cnt=args.cmcnt)
     elif args.url and args.youtube:
         d = grabytcomments(args.url)
-        if d.count() > 0 and args.dbout:
+        if VERBOSE:
+            print("Record Count: {}".format(len(d.index)))
+        if len(d.index) > 0 and args.dbout:
             #Convert dataframe to sqlite db
             engine = create_engine("sqlite:///{}".format(filename), echo=True)
             sqlite_connection = engine.connect()
             d.to_sql('ytcomments', sqlite_connection)
-        if d.count() > 0 and args.csv:
+        if len(d.index) > 0 and args.csv:
             d.to_csv(filename)
         else:
             for row in d:
@@ -93,13 +102,15 @@ def grabytcomments(url, cnt=10):
 
     df = pd.concat([pd.DataFrame([author.text], columns=['Author']) for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#author-text")) )], ignore_index=True)
     if VERBOSE:
-        print("Authors added to dataframe, Count: {}".format(df.count())
+        print("Authors added to dataframe, Count: {}".format(df.count()))
+
     df['AuthorLink'] = [author.get_attribute('href') for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#author-text")) )]
     if VERBOSE:
-        print("Authors profile link added to dataframe, Count: {}".format(df.count())
+        print("Authors profile link added to dataframe, Count: {}".format(df.count()))
+
     df['Comment'] = [comment.text for comment in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text")) )]
     if VERBOSE:
-        print("Comment added to dataframe, Count: {}".format(df.count())
+        print("Comment added to dataframe, Count: {}".format(df.count()))
     print(df.head())
     return df
 
