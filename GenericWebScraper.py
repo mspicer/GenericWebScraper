@@ -36,7 +36,7 @@ def main():
     global VERBOSE
     parser = argparse.ArgumentParser(description="Generic Web Scraper - Just another web scrapper")
     parser.add_argument("-yt", "--youtube", action="store_true", dest='youtube', help="Grab some comments from a Youtube Vide")
-    parser.add_argument("-c", "--comment_count", action="store", dest="cmcnt", help="The number of pages of comments to get")
+    parser.add_argument("-cc", "--comment_count", action="store", dest="cmcnt", help="The number of pages of comments to get")
     parser.add_argument("-u", "--url", action="store", dest='url', help="The URL that will be grabbed")
     parser.add_argument("-db", "-db_out", action="store_true", dest="dbout", help="Output the data to SQLite.")
     parser.add_argument("-c", "--csv", action="store_true", dest="csv", help="Output the data as CSV file")
