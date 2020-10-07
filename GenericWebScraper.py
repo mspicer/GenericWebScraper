@@ -93,13 +93,15 @@ def grabytcomments(url, cnt=10):
 
     df = pd.concat([pd.DataFrame([author.text], columns=['Author']) for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#author-text")) )], ignore_index=True)
     if VERBOSE:
-        print("Authors added to dataframe, Count: {}".format(df.count())
+        print("Authors added to dataframe, Count: {}".format(df.count()))
+
     df['AuthorLink'] = [author.get_attribute('href') for author in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#author-text")) )]
     if VERBOSE:
-        print("Authors profile link added to dataframe, Count: {}".format(df.count())
+        print("Authors profile link added to dataframe, Count: {}".format(df.count()))
+
     df['Comment'] = [comment.text for comment in wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text")) )]
     if VERBOSE:
-        print("Comment added to dataframe, Count: {}".format(df.count())
+        print("Comment added to dataframe, Count: {}".format(df.count()))
     print(df.head())
     return df
 
