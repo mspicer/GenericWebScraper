@@ -49,11 +49,16 @@ def main():
         if pr.scheme == '' and pr.netloc == '':
             usage(parser)
             sys.exit(1)
+    filename = "scrape-{}".format(int(time.time()))
+    if args.output:
+        filename = args.output
 
     if args.url and args.youtube and args.cmcnt:
         grabytcomments(args.url, cnt=args.cmcnt)
     elif args.url and args.youtube:
         d = grabytcomments(args.url)
+        if VERBOSE:
+            print("Record Count: {}".format(d.count()))
         if d.count() > 0 and args.dbout:
             #Convert dataframe to sqlite db
             engine = create_engine("sqlite:///{}".format(filename), echo=True)
