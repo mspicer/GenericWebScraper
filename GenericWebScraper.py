@@ -41,9 +41,13 @@ def main():
     parser.add_argument("-db", "-db_out", action="store_true", dest="dbout", help="Output the data to SQLite.")
     parser.add_argument("-c", "--csv", action="store_true", dest="csv", help="Output the data as CSV file")
     parser.add_argument("-o", "--out_file", action="store", dest="output", help="Output file")
+    parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="Make things verbose")
 
     args = parser.parse_args()
-        
+    
+    if args.verbose:
+        VERBOSE = True
+
     if args.url:
         pr = urlparse(args.url)
         if pr.scheme == '' and pr.netloc == '':
