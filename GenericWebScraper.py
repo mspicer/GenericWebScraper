@@ -126,6 +126,8 @@ def findsearch(url):
     driver.get(url)
     mo = re.search("<form.*search.*>", driver.page_source)
     print(mo.group())
+    s = mo.group()
+    print(s.find('method'))
     # res = [i.start() for i in re.finditer('search', driver.page_source)]
     # for l in res:
     #     print(driver.page_source[l:driver.page_source.find("\n", l)])
