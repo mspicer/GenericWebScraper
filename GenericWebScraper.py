@@ -138,7 +138,7 @@ def findsearch(url):
 
     mo = re.search("<input.*name.*>", driver.page_source)
     if VERBOSE:
-        print(mo.group())
+        print(mo.groups())
     
     # res = [i.start() for i in re.finditer('search', driver.page_source)]
     # for l in res:
