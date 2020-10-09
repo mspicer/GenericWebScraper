@@ -120,12 +120,14 @@ def grabytcomments(url, cnt=10):
     return df
 
 def findsearch(url):
+    global VERBOSE
     display = Display(visible=0, size=(800, 600))
     display.start()
     driver = webdriver.Chrome()
     driver.get(url)
     mo = re.search("<form.*search.*>", driver.page_source)
-    print(mo.group())
+    if VERBOSE: 
+        print(mo.group())
     s = mo.group()
     #print(s.find('method'))
     mpos = s.find('method')
@@ -133,6 +135,11 @@ def findsearch(url):
     apos = s.find('action')
     action = s[apos+8:s.find('\"', apos+8)]
     print("Action: {} Method: {}".format(action, method))
+
+    mo = re.search("<input.*name.*>", driver.page_source)
+    if VERBOSE:
+        print(mo.group())
+    
     # res = [i.start() for i in re.finditer('search', driver.page_source)]
     # for l in res:
     #     print(driver.page_source[l:driver.page_source.find("\n", l)])
