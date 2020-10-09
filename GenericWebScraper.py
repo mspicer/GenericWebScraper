@@ -124,9 +124,11 @@ def findsearch(url):
     display.start()
     driver = webdriver.Chrome()
     driver.get(url)
-    res = [i.start() for i in re.finditer('search\?', driver.page_source)]
-    for l in res:
-        print(driver.page_source[l:driver.page_source.find("\n", l)])
+    mo = re.search("<form.*search.*>", driver.page_source)
+    print(mo.group())
+    # res = [i.start() for i in re.finditer('search', driver.page_source)]
+    # for l in res:
+    #     print(driver.page_source[l:driver.page_source.find("\n", l)])
     
 if __name__ == "__main__":
     main()
