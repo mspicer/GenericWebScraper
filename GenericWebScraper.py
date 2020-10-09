@@ -129,9 +129,9 @@ def findsearch(url):
     s = mo.group()
     #print(s.find('method'))
     mpos = s.find('method')
-    method = s[mpos+8:s.find('"', mpos+1)-1]
+    method = s[mpos+8:s.find('\"', mpos+1)-1]
     apos = s.find('action')
-    action = s[apos+8:s.find('"', apos+1)-1]
+    action = s[apos+8:s.find('\"', apos+1)-1]
     print("Action: {} Method: {}".format(action, method))
     # res = [i.start() for i in re.finditer('search', driver.page_source)]
     # for l in res:
