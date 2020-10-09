@@ -29,7 +29,7 @@ import csv
 import pandas as pd
 from urllib.parse import urlparse
 from sqlalchemy import create_engine
-
+import re
 
 VERBOSE = False
 
