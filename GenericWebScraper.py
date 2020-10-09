@@ -16,16 +16,17 @@ from pyvirtualdisplay import Display
 import argparse
 from dateutil import parser as dateparser
 import datetime, time
-import sqlite3
+# import sqlite3
 import sys
 import csv
-import multiprocessing as mp
-import os, subprocess
-import struct
-from multiprocessing.pool import ThreadPool
-from multiprocessing import Process
+# For future use:
+# import multiprocessing as mp
+# import os, subprocess
+# import struct
+# from multiprocessing.pool import ThreadPool
+# from multiprocessing import Process
+# import shutil
 import pandas as pd
-import shutil
 from urllib.parse import urlparse
 from sqlalchemy import create_engine
 
@@ -42,6 +43,7 @@ def main():
     parser.add_argument("-c", "--csv", action="store_true", dest="csv", help="Output the data as CSV file")
     parser.add_argument("-o", "--out_file", action="store", dest="output", help="Output file")
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="Make things verbose")
+    parser.add_argument("-fs", "--find_search", action="store_true", dest="findsearch", help="Search for the search functionality and return what it")
 
     args = parser.parse_args()
     
@@ -73,6 +75,9 @@ def main():
         else:
             for row in d:
                 print(row)
+    elif args.findsearch and args.url:
+        findsearch(args.url)
+    
 
 
 def usage(parser):
@@ -114,6 +119,14 @@ def grabytcomments(url, cnt=10):
     print(df.head())
     return df
 
+def findsearch(url):
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    driver = webdriver.Chrome()
+    driver.get(url)
+    res = [i.start() for i in re.finditer('search', driver.page_source)]
+    for l in res:
+        print(driver.page_source[l:driver.page_source.find("\n", l)])
     
 if __name__ == "__main__":
     main()
